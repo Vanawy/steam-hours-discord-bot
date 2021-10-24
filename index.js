@@ -2,6 +2,11 @@ require('dotenv').config();
 const Keyv = require('keyv');
 const Discord = require("discord.js");
 
+const SteamAPI = require('steamapi');
+const steam = new SteamAPI(process.env.STEAM_KEY);
+const userID = process.env.STEAM_USER_ID;
+const gameID = process.env.STEAM_APP_ID
+
 // in seconds
 const interval = Number.isInteger(process.env.INTERVAL) ? process.env.INTERVAL : 5 * 60;
 const keyv_namespace = process.env.KEYV_NAMESPACE || 'steam_hours';
@@ -60,7 +65,7 @@ async function main() {
 }
 
 async function checkHours() {
-    const hours = await getHours(steam_user_id, game_name);
+    const hours = await getHours(userID, gameID);
     updateBotStatus(hours);
 
     console.log(activeStreams.length, newStreams.length);
@@ -117,6 +122,22 @@ async function setValue(key, value) {
     return channelStore.set(key, value);
 }
 
-async function getHours(steam_user_id, game_name) {
-
-}
+/**
+ * 
+ * @returns RecentGame|null
+ */
+ async function getHours(user, gameID)
+ {
+     return steam.getUserRecentGames(user)
+     .then(games => {
+         let game = games.filter(game => {
+             return game.appID == gameID;
+         });
+         return game.length > 0 ? game[0] : null;
+     })
+     .then(game => {
+         if (!game) return null;
+         return Math.floor(game.playTime / 60)
+     })
+     ;
+ }
