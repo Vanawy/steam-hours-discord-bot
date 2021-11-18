@@ -89,9 +89,13 @@ async function checkHours() {
 }
 
 function notifyAboutChange(hours) {
-    const title = `╰(*°▽°*)╯`;
+    let title = `╰(*°▽°*)╯`;
 
-    const description = `Уже ${hours} часов в золоте короля Артура. Это нормально???`;
+    let description = `Уже ${hours} часов в золоте короля Артура. Это нормально???`;
+    if (hours % 1000 == 0) {
+        title = `Ебать.`
+        description = `@everyone - ${hours} часов... Скриньте!`
+    }
     const embed = new MessageEmbed()
         .setTitle(title)
         .setDescription(description)
