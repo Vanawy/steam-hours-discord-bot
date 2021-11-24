@@ -80,7 +80,7 @@ async function checkHours() {
 
     const oldValue = await getValue(USER_ID);
     console.log(`Old: ${oldValue} - New: ${newValue}`);
-    if (oldValue && oldValue == newValue) {
+    if (!newValue || oldValue == newValue) {
         return;
     }
     await setValue(USER_ID, newValue);
@@ -92,6 +92,9 @@ function notifyAboutChange(hours) {
     let title = `╰(*°▽°*)╯`;
 
     let description = `Уже ${hours} часов в золоте короля Артура. Это нормально???`;
+    if (hours % 5 != 0) {
+        return;
+    }
     if (hours % 1000 == 0) {
         title = `Ебать.`
         description = `@everyone - ${hours} часов... Скриньте!`
